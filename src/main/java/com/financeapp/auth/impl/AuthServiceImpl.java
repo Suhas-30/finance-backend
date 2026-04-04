@@ -53,7 +53,7 @@ public class AuthServiceImpl implements AuthService {
         String normalizeEmail = email.trim().toLowerCase();
 
         User user = userRepository.findByEmail(normalizeEmail)
-                .orElseThrow(()-> new AppException("Invaild email or password", HttpStatus.UNAUTHORIZED));
+                .orElseThrow(()-> new AppException("Invalid email or password", HttpStatus.UNAUTHORIZED));
 
         if(!passwordEncoder.matches(password, user.getPassword())){
             throw new AppException("Invalid email or password", HttpStatus.UNAUTHORIZED);
