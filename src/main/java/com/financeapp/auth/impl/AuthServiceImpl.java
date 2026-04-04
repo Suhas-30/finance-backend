@@ -1,6 +1,7 @@
 package com.financeapp.auth.impl;
 
 import com.financeapp.auth.AuthService;
+import com.financeapp.auth.dto.ChangePasswordRequest;
 import com.financeapp.auth.dto.RegisterRequest;
 import com.financeapp.common.exception.AppException;
 import com.financeapp.config.jwt.JwtService;
@@ -10,6 +11,7 @@ import com.financeapp.user.domain.UserStatus;
 import com.financeapp.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
@@ -61,5 +63,28 @@ public class AuthServiceImpl implements AuthService {
                 user.getEmail(),
                 user.getRole().name()
         );
+    }
+
+    @Override
+    public void changePassword(ChangePasswordRequest request, Authentication authentication) {
+        String  email = authentication.getName();
+
+        String oldPassword = request.getOldPassword();
+        String newPassword = request.getNewPassword();
+
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new AppException("User not found", HttpStatus.NOT_FOUND));
+
+        if(!passwordEncoder.matches(oldPassword, user.getPassword())){
+            throw  new AppException("Old password is incorrect", HttpStatus.BAD_REQUEST);
+        }
+
+        if(oldPassword.equals(newPassword)){
+            throw new AppException("New password must be different from old password", HttpStatus.BAD_REQUEST);
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+
+        userRepository.save(user);
+
     }
 }
