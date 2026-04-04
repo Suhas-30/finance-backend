@@ -38,4 +38,7 @@ public class AuthController {
         authService.changePassword(request, authentication);
         return  new ApiResponse<>(true, "Password Changed Successfully", null);
     }
+
+
+
 }
