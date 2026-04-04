@@ -1,7 +1,7 @@
 package com.financeapp.record.service.impl;
 
 import com.financeapp.common.exception.AppException;
-import com.financeapp.record.Repository.RecordRepository;
+import com.financeapp.record.repository.RecordRepository;
 import com.financeapp.record.domain.Record;
 import com.financeapp.record.domain.RecordType;
 import com.financeapp.record.dto.RecordRequest;

@@ -1,9 +1,12 @@
-package com.financeapp.record.Repository;
+package com.financeapp.record.repository;
 
 import com.financeapp.record.domain.Record;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface RecordRepository extends JpaRepository<Record, UUID> {
+    List<Record> findTop5ByOrderByCreatedAtDesc();
+
 }
