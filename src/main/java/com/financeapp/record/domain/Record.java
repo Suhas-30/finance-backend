@@ -26,7 +26,7 @@ public class Record {
     private Double amount;
 
     @Enumerated(EnumType.STRING)
-    private RecordType type; // INCOME / EXPENSE
+    private RecordType type;
 
     private String category;
 
@@ -34,12 +34,12 @@ public class Record {
 
     private String note;
 
-    // who created this record
+
     @ManyToOne
     @JoinColumn(name = "created_by")
     private User createdBy;
 
-    // last person who updated this record
+
     @ManyToOne
     @JoinColumn(name = "updated_by")
     private User updatedBy;
