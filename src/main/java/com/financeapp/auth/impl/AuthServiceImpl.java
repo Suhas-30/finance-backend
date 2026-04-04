@@ -10,7 +10,7 @@ import com.financeapp.user.domain.UserStatus;
 import com.financeapp.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
     @Override
@@ -36,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
 
         User user = new User();
         user.setEmail(email);
-        user.setPassword(bCryptPasswordEncoder.encode(password));
+        user.setPassword(passwordEncoder.encode(password));
         user.setFullName(fullName);
         user.setStatus(UserStatus.ACTIVE);
         user.setRole(Role.VIEWER);
@@ -53,7 +53,7 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findByEmail(normalizeEmail)
                 .orElseThrow(()-> new AppException("Invaild email or password", HttpStatus.UNAUTHORIZED));
 
-        if(!bCryptPasswordEncoder.matches(password, user.getPassword())){
+        if(!passwordEncoder.matches(password, user.getPassword())){
             throw new AppException("Invalid email or password", HttpStatus.UNAUTHORIZED);
         }
 
