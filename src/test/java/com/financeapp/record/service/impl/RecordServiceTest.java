@@ -5,7 +5,6 @@ import com.financeapp.record.domain.Record;
 import com.financeapp.record.domain.RecordType;
 import com.financeapp.record.dto.RecordRequest;
 import com.financeapp.record.repository.RecordRepository;
-import com.financeapp.record.service.impl.RecordServiceImpl;
 import com.financeapp.user.domain.Role;
 import com.financeapp.user.domain.User;
 import com.financeapp.user.repository.UserRepository;
@@ -64,9 +63,9 @@ class RecordServiceTest {
         when(authentication.getName()).thenReturn("test@gmail.com");
         when(userRepository.findByEmail("test@gmail.com")).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(AppException.class, () -> {
-            recordService.createRecord(new RecordRequest(), authentication);
-        });
+        Assertions.assertThrows(AppException.class, () ->
+                recordService.createRecord(new RecordRequest(), authentication)
+        );
     }
 
     @Test
@@ -92,9 +91,9 @@ class RecordServiceTest {
         when(authentication.getName()).thenReturn("test@gmail.com");
         when(userRepository.findByEmail("test@gmail.com")).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(AppException.class, () -> {
-            recordService.getAllRecords(authentication);
-        });
+        Assertions.assertThrows(AppException.class, () ->
+                recordService.getAllRecords(authentication)
+        );
     }
 
     @Test
@@ -118,27 +117,59 @@ class RecordServiceTest {
         UUID id = UUID.randomUUID();
         when(recordRepository.findById(id)).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(AppException.class, () -> {
-            recordService.getRecordById(id, authentication);
-        });
+        Assertions.assertThrows(AppException.class, () ->
+                recordService.getRecordById(id, authentication)
+        );
     }
 
     @Test
-    void shouldUpdateRecordSuccessfully() {
+    void shouldUpdateRecordSuccessfully_whenExpenseDecreases() {
         User admin = new User();
         admin.setEmail("admin@gmail.com");
         admin.setRole(Role.ADMIN);
 
         Record record = new Record();
+        record.setType(RecordType.EXPENSE);
+        record.setAmount(200.0);
+
         UUID id = UUID.randomUUID();
+
+        RecordRequest request = new RecordRequest();
+        request.setAmount(100.0);
+        request.setType(RecordType.EXPENSE);
 
         when(authentication.getName()).thenReturn("admin@gmail.com");
         when(userRepository.findByEmail("admin@gmail.com")).thenReturn(Optional.of(admin));
         when(recordRepository.findById(id)).thenReturn(Optional.of(record));
 
-        recordService.updateRecord(id, new RecordRequest(), authentication);
+        recordService.updateRecord(id, request, authentication);
 
         verify(recordRepository).save(record);
+    }
+
+    @Test
+    void shouldThrowWhenExpenseAmountIncreased() {
+        User admin = new User();
+        admin.setEmail("admin@gmail.com");
+        admin.setRole(Role.ADMIN);
+
+        Record record = new Record();
+        record.setType(RecordType.EXPENSE);
+        record.setAmount(100.0);
+
+        UUID id = UUID.randomUUID();
+
+        RecordRequest request = new RecordRequest();
+        request.setAmount(200.0);
+        request.setType(RecordType.EXPENSE);
+
+        when(authentication.getName()).thenReturn("admin@gmail.com");
+        when(userRepository.findByEmail("admin@gmail.com")).thenReturn(Optional.of(admin));
+        when(recordRepository.findById(id)).thenReturn(Optional.of(record));
+
+        Assertions.assertThrows(AppException.class, () ->
+                recordService.updateRecord(id, request, authentication)
+        );
     }
 
     @Test
@@ -149,9 +180,9 @@ class RecordServiceTest {
         when(authentication.getName()).thenReturn("test@gmail.com");
         when(userRepository.findByEmail("test@gmail.com")).thenReturn(Optional.of(user));
 
-        Assertions.assertThrows(AppException.class, () -> {
-            recordService.updateRecord(UUID.randomUUID(), new RecordRequest(), authentication);
-        });
+        Assertions.assertThrows(AppException.class, () ->
+                recordService.updateRecord(UUID.randomUUID(), new RecordRequest(), authentication)
+        );
     }
 
     @Test
@@ -179,9 +210,9 @@ class RecordServiceTest {
         when(authentication.getName()).thenReturn("test@gmail.com");
         when(userRepository.findByEmail("test@gmail.com")).thenReturn(Optional.of(user));
 
-        Assertions.assertThrows(AppException.class, () -> {
-            recordService.deleteRecord(UUID.randomUUID(), authentication);
-        });
+        Assertions.assertThrows(AppException.class, () ->
+                recordService.deleteRecord(UUID.randomUUID(), authentication)
+        );
     }
 
     @Test
