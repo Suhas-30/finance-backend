@@ -90,19 +90,29 @@ public class RecordServiceImpl implements RecordService {
 
         String email = authentication.getName();
 
-        User user = userRepository.findByEmail(email).orElseThrow(()-> new AppException("User not found", HttpStatus.NOT_FOUND));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException("User not found", HttpStatus.NOT_FOUND));
 
         if (user.getRole() != Role.ADMIN) {
             throw new AppException("Access denied", HttpStatus.FORBIDDEN);
         }
 
-        Record record = recordRepository.findById(id).orElseThrow(()-> new AppException("Record not found", HttpStatus.NOT_FOUND));
+        Record record = recordRepository.findById(id)
+                .orElseThrow(() -> new AppException("Record not found", HttpStatus.NOT_FOUND));
+
+        if (record.getType() == RecordType.EXPENSE) {
+            if (request.getAmount().compareTo(record.getAmount()) > 0) {
+                throw new AppException("Expense amount cannot be increased", HttpStatus.BAD_REQUEST);
+            }
+        }
+
         record.setAmount(request.getAmount());
         record.setType(request.getType());
         record.setCategory(request.getCategory());
         record.setDate(request.getDate());
         record.setNote(request.getNote());
         record.setUpdatedBy(user);
+
         recordRepository.save(record);
     }
 
