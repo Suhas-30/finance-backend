@@ -86,7 +86,7 @@ This application includes basic rate limiting to prevent abuse and brute-force a
 
 **Swagger UI:**
 ```
-https://finance-backend-j2mr.onrender.com   (live)
+https://finance-backend-j2mr.onrender.com/swagger-ui/index.html  (live)
 http://localhost:8080/swagger-ui/index.html (local)
 ```
 
@@ -220,7 +220,7 @@ Use **Swagger UI** or **Postman** to test all APIs.
 
 ## 🚀 Deployment
 
-> Live URL: https://finance-backend-j2mr.onrender.com
+> Live URL: https://finance-backend-j2mr.onrender.com/swagger-ui/index.html
 > (Note: May take 30+ seconds on first request due to cold start on free hosting)
 
 ---
